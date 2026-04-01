@@ -99,9 +99,9 @@ jobs:
       - name: Création du fichier .env de staging
         run: |
           cat <<EOF > vitalsync/.env
-          POSTGRES_DB=vitalsync
-          POSTGRES_USER=vitalsync_user
-          POSTGRES_PASSWORD=vitalsync_pass_staging
+          POSTGRES_DB=${{ secrets.STAGING_POSTGRES_DB }}
+          POSTGRES_USER=${{ secrets.STAGING_POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.STAGING_POSTGRES_PASSWORD }}
           NODE_ENV=production
           PORT=3000
           EOF
