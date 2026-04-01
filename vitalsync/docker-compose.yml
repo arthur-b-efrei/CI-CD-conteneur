@@ -1,6 +1,5 @@
 services:
 
-  # ── Base de données PostgreSQL ──────────────────────────────────────────────
   database:
     image: postgres:16-alpine
     container_name: vitalsync-db
@@ -10,7 +9,6 @@ services:
       POSTGRES_USER:     ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      # Volume nommé persistant : les données survivent à docker-compose down
       - postgres_data:/var/lib/postgresql/data
     networks:
       - vitalsync-network
@@ -20,7 +18,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # ── Backend Node.js / Express ────────────────────────────────────────────────
   backend:
     build:
       context: ./backend
@@ -28,13 +25,13 @@ services:
     container_name: vitalsync-backend
     restart: unless-stopped
     environment:
-      NODE_ENV:          ${NODE_ENV}
-      PORT:              ${PORT}
-      DB_HOST:           database
-      DB_PORT:           5432
-      DB_NAME:           ${POSTGRES_DB}
-      DB_USER:           ${POSTGRES_USER}
-      DB_PASSWORD:       ${POSTGRES_PASSWORD}
+      NODE_ENV:    ${NODE_ENV}
+      PORT:        ${PORT}
+      DB_HOST:     database
+      DB_PORT:     5432
+      DB_NAME:     ${POSTGRES_DB}
+      DB_USER:     ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "${PORT}:3000"
     depends_on:
@@ -43,7 +40,6 @@ services:
     networks:
       - vitalsync-network
 
-  # ── Frontend Nginx ───────────────────────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
@@ -57,18 +53,9 @@ services:
     networks:
       - vitalsync-network
 
-# ── Réseau bridge personnalisé ─────────────────────────────────────────────────
-# Un réseau bridge dédié isole les conteneurs du reste de Docker :
-# - Seuls les services déclarés ici peuvent communiquer entre eux
-# - Les conteneurs se joignent par nom (ex: "backend", "database") sans exposer leurs ports
-# - Le réseau bridge par défaut ne supporte pas la résolution DNS par nom de service
 networks:
   vitalsync-network:
     driver: bridge
 
-# ── Volume persistant PostgreSQL ───────────────────────────────────────────────
-# Sans ce volume, toutes les données seraient perdues à chaque docker-compose down.
-# Avec ce volume nommé, Docker conserve les données sur l'hôte indépendamment
-# du cycle de vie des conteneurs.
 volumes:
   postgres_data:
