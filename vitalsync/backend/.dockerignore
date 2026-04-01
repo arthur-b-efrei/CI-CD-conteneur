@@ -9,8 +9,7 @@ logs/
 .env
 .env.*
 
-# Fichiers de tests — absents du stage de production (déjà exécutés dans le builder)
-test/
+# Résultats de couverture de tests — générés localement, inutiles dans l'image
 coverage/
 .nyc_output/
 
