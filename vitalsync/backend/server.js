@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date() });
+  res.json({ status: "healthy", uptime: process.uptime(), version: "1.0.0" });
 });
 
 app.get("/api/activities", (req, res) => {
