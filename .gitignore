@@ -1,0 +1,14 @@
+# Variables d'environnement — ne jamais commiter les secrets
+.env
+vitalsync/.env
+
+# Dépendances Node.js
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
