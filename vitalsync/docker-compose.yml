@@ -1,0 +1,61 @@
+services:
+
+  database:
+    image: postgres:16-alpine
+    container_name: vitalsync-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - vitalsync-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vitalsync-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV:    ${NODE_ENV}
+      PORT:        ${PORT}
+      DB_HOST:     database
+      DB_PORT:     5432
+      DB_NAME:     ${POSTGRES_DB}
+      DB_USER:     ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${PORT}:3000"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - vitalsync-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vitalsync-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - vitalsync-network
+
+networks:
+  vitalsync-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

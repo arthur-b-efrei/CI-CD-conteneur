@@ -1,0 +1,27 @@
+# Dépendances installées localement — reconstruites dans le conteneur via npm install
+node_modules/
+
+# Logs applicatifs — inutiles dans l'image, peuvent exposer des infos sensibles
+*.log
+logs/
+
+# Variables d'environnement — ne jamais embarquer de secrets dans une image Docker
+.env
+.env.*
+
+# Résultats de couverture de tests — générés localement, inutiles dans l'image
+coverage/
+.nyc_output/
+
+# Fichier Docker lui-même — inutile à copier dans le conteneur
+Dockerfile
+.dockerignore
+
+# Fichiers Git — historique et config non nécessaires dans l'image
+.git/
+.gitignore
+
+# Fichiers d'éditeurs — artefacts locaux sans utilité en production
+.vscode/
+.idea/
+*.swp
